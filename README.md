@@ -43,8 +43,7 @@ pub struct TransactionBatchProcessor<FG: ForkGraph> {
     pub program_cache: Arc<RwLock<ProgramCache<FG>>>,
 
     /// A thread-safe collection of program IDs for built-in (native) programs. 
-    /// These are foundational programs included in the blockchain runtime, 
-    /// such as the system program, vote program, or stake program.
+    /// These are foundational programs included in the blockchain runtime
     pub builtin_program_ids: RwLock<HashSet<Pubkey>>,
 }
 
@@ -60,6 +59,40 @@ impl<FG: ForkGraph> Debug for TransactionBatchProcessor<FG> {
             .field("sysvar_cache", &self.sysvar_cache) // Adds the sysvar_cache field to the debug output.
             .field("program_cache", &self.program_cache) // Adds the program_cache field to the debug output.
             .finish() // Finalizes the debug struct.
+    }
+}
+impl<FG: ForkGraph> Default for TransactionBatchProcessor<FG> {
+    /// Implements the `Default` trait to provide a default instance of
+    /// `TransactionBatchProcessor`. This is useful when a fully initialized
+    /// instance isn't required, or as a placeholder for testing.
+    fn default() -> Self {
+        Self {
+            // Sets the `slot` field to its default value. This represents the current
+            // block number being processed, defaulting to the initial slot.
+            slot: Slot::default(),
+
+            // Sets the `epoch` field to its default value. Epochs are groups of slots,
+            // used for higher-level organization such as staking and consensus.
+            epoch: Epoch::default(),
+
+            // Initializes the `sysvar_cache` field with a default instance of `SysvarCache`
+            // wrapped in a thread-safe `RwLock`. This ensures sysvar data can be accessed
+            // safely and concurrently.
+            sysvar_cache: RwLock::<SysvarCache>::default(),
+
+            // Initializes the `program_cache` field with a default `ProgramCache`
+            // wrapped in an `Arc` and `RwLock`. This enables sharing program data
+            // between threads, while ensuring mutable access when needed.
+            program_cache: Arc::new(RwLock::new(ProgramCache::new(
+                Slot::default(), // Default slot for the cache.
+                Epoch::default(), // Default epoch for the cache.
+            ))),
+
+            // Initializes the `builtin_program_ids` field as an empty `HashSet`
+            // wrapped in a thread-safe `RwLock`. This will hold the IDs of
+            // built-in programs required for execution.
+            builtin_program_ids: RwLock::new(HashSet::new()),
+        }
     }
 }
 ```
