@@ -22,6 +22,26 @@ Tests the same implementations but with a batch of 100 transactions to better hi
 - Original vs Pre-allocated for SPL token transfers
 - Original vs Pre-allocated for native SOL transfers
 
+## Running the Benchmarks
+
+To run the benchmarks and analyze the results, follow these steps:
+
+1. Clean previous results (optional) & Run the benchmarks and save the results:
+```bash
+cargo clean
+cargo bench
+```
+
+2. Analyze and display the results in a formatted table:
+```bash
+cargo run --bin analyze_results
+```
+The analysis will show:
+- Benchmark name
+- Average execution time (in nanoseconds)
+- Standard deviation
+
+
 ## About PayTube
 
 PayTube is a reference implementation of an off-chain [state channel](https://ethereum.org/en/developers/docs/scaling/state-channels/)
