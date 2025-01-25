@@ -94,5 +94,3 @@ pub fn create_svm_transactions_preallocated(
     result.extend(paytube_transactions.iter().map(SolanaSanitizedTransaction::from));
     result
 }
-
-
